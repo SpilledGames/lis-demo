@@ -1,0 +1,21 @@
+locations:
+  "/debug":
+    name: "Scene Options"
+
+    enter:
+      - cancelable: true
+        clear: true
+        options:
+          - event-option: [ "chloe-stole-money", "Chloe stole money" ]
+          - event-option: [ "chloe-has-gun",     "Chloe has gun" ]
+          - when:
+              - event: "chloe-has-gun"
+              - no-event: "chloe-has-nathan-gun"
+            name: "Chloe has Nathan's gun"
+            description: "Chloe has Nathan's gun. Frank has Chloe's gun." 
+            set-event: [ "chloe-has-nathan-gun", "frank-has-chloe-gun" ]
+          - event-option: [ "max-shot-frank",    "Max attempted to shoot frank" ]
+          - event-option: [ "max-knows-dogs",    "Max knows about rescue dogs" ]
+          - event-option: [ "max-knows-photo",   "Max knows about Rachel Photo" ]
+          - event-option: [ "dog-is-present",    "Frank's dog is present" ]
+          - event-option: [ "dog-is-hurt",       "Frank's dog is hurt" ]

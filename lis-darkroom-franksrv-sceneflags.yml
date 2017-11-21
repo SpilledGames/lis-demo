@@ -1,0 +1,41 @@
+locations:
+  "/lis/dark room/franks rv/scene flags":
+    hidden: true
+    name: "List"
+ 
+    enter:
+      - step:
+        - when:
+            - once-only: true
+          description: "This shows the state of the scene options which affect how the scene plays out."
+        - checklist:
+            - checked: 
+                - event: "chloe-stole-money"
+              name:  "Chloe stole money" 
+            - checked: 
+                - event: "chloe-has-gun"
+              name: "Chloe has gun"
+            - checked:
+                - event: "chloe-has-nathan-gun"
+              name: "Chloe has Nathan's gun"
+            - checked:
+                - event: "frank-has-chloe-gun"
+              name: "Frank has Chloe's gun"
+            - checked:
+                - event: "max-shot-frank"
+              name: "Max attempted to shoot frank" 
+            - checked:
+                - event: "max-knows-dogs"
+              name: "Max knows about rescue dogs" 
+            - checked:
+                - event: "max-knows-photo"
+              name: "Max knows about Rachel Photo" 
+            - checked:
+                - event: "dog-is-present"
+              name: "Frank's dog is present" 
+            - checked:
+                - event: "dog-is-hurt"
+              name: "Frank's dog is hurt" 
+            - checked:
+                - event: "angry-1"
+              name: "Frank is angry"

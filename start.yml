@@ -1,0 +1,17 @@
+locations:
+  "/start":
+    name: "Example (from) Life is Strange"
+
+    enter:
+
+      - step:
+          - add-child-path: [ "/inventory", "/lis/rewind" ]
+          - clear: true
+            options:
+              - name: "Scene Options"
+                retry: true
+                push: "/debug"
+              - name: "Start Scene"
+                step:
+                  - add-child-path: [ "/inventory", "/lis/dark room/franks rv/scene flags" ]
+                  - call: [ "/lis/dark room/franks rv", "state-first-start" ]

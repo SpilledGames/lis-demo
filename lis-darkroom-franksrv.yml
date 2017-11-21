@@ -1,0 +1,1209 @@
+locations:
+  "/lis/dark room/franks rv":
+    name: "(Ep 4: Dark Room) Frank's RV"
+
+    off-stage: 
+
+      #
+      # States
+      #
+
+      "state-first-start":
+        step: 
+          - when-event: "chloe-has-gun"
+            next: "first-start-gun"
+          - when-no-event: "chloe-has-gun"
+            next: "first-start-no-gun"
+          - next: "state-negotiation"
+
+      # REWIND CHECKPOINT-1
+
+      "checkpoint-1":
+        step:
+          - clear-event: "checkpoint-1"
+          - clear-event: "checkpoint-2"
+          - clear-event: "checkpoint-3"
+          - clear-event: "checkpoint-4"
+          - clear-event: "checkpoint-5"
+          - clear-event: "checkpoint-6"
+          - clear-event: "angry-1"
+          - next: "state-restart"
+
+      "state-restart":
+        step: 
+          - next: "restart"
+          - options:
+              - name: "Watch your mouth"
+                step:
+                  - next: "restart-watchyourmouth"
+                  - set-event: "chloe-will-be-nice"
+              - name: "Be careful"
+                next: "restart-becareful"
+              - when-event: "chloe-has-gun"
+                name: "Get rid of gun"
+                step:
+                  - next: "restart-getridofgun"
+                  - clear-event: "chloe-has-gun"
+          - next: "state-negotiation"
+
+      "state-negotiation":
+        step: 
+          - next: "negotiation"
+          - when-event: "chloe-stole-money"
+            next: "state-negotiation-stolemoney"
+          - when-no-event: "chloe-stole-money"
+            next: "state-negotiation-notstolemoney"
+
+      "state-negotiation-stolemoney":
+        step: 
+          - next: "negotiation-stolemoney"
+          - options:
+              - name: "Give the money" 
+                next: "state-negotiation-stolemoney-givemoneystart"
+              - name: "Keep money"
+                next: "state-negotiation-stolemoney-notgivemoney"
+
+      "state-negotiation-stolemoney-givemoneystart":
+        step:
+          - next: "negotiation-stolemoney-givemoneystart"
+          - next: "state-negotiation-stolemoney-givemoney"
+
+      "state-negotiation-stolemoney-notgivemoney":
+        step: 
+          - next: "negotiation-stolemoney-notgivemoney"
+          - set-event: "angry-1"
+          - next: "state-negotiation-stolemoney-givemoney"
+
+      "state-negotiation-notstolemoney":
+        step: 
+          - next: "negotiation-notstolemoney"
+          - set-event: "angry-1"
+          - next: "state-negotiation-stolemoney-givemoney"
+
+      # REWIND CHECKPOINT-2
+
+      "checkpoint-2":
+        step:
+          - set-event: "checkpoint-1"
+          - clear-event: "checkpoint-2"
+          - next: "state-negotiation-stolemoney-givemoney"
+
+      "state-negotiation-stolemoney-givemoney":
+        step:
+          - next: "negotiation-stolemoney-givemoney"
+          - next: "state-negotiation-rewindcheck"
+
+      "state-negotiation-rewindcheck":
+        step: 
+          - when-prev: "state-restart"
+            next: "state-negotiation-rewindcheck-yes"
+          - when-no-prev: "state-restart"
+            next: "state-negotiation-rewindcheck-no"
+          - next: "state-negotiation-mainpath"
+
+      "state-negotiation-rewindcheck-no":
+        step: 
+          - next: "negotiation-rewindcheck-no"
+
+      "state-negotiation-rewindcheck-yes":
+        step: 
+          - set-event: "checkpoint-2"
+          - options:
+              - name: "No fight" 
+                next: "negotiation-rewindcheck-yes-nofight"
+              - name: "No weapons" 
+                step:
+                  - next: "negotiation-rewindcheck-yes-noweapons"
+                  - when-event: "angry-1"
+                    step:
+                      - next: "negotiation-rewindcheck-yes-noweapons-angry-1"
+                      - next: "state-ragemode"
+                  - when-no-event: "angry-1"
+                    next: "negotiation-rewindcheck-yes-noweapons-no-angry-1"
+              - when-event: "dog-is-present"
+                name: "Close the door" 
+                step:
+                  - next: "negotiation-rewindcheck-yes-closethedoor"
+                  - clear-event: "dog-is-present"
+
+      # REWIND CHECKPOINT-3
+
+      "checkpoint-3":
+        step:
+          - set-event: "checkpoint-2"
+          - clear-event: "checkpoint-3"
+          - next: "state-negotiation-mainpath"
+
+      "state-negotiation-mainpath":
+        step:
+          - next: "negotiation-mainpath"
+          - set-event: "checkpoint-3"
+          - options:
+              - name: "I'm sorry" 
+                step:
+                  - next: "negotiation-mainpath-imsorry"
+                  - when-event: "chloe-will-be-nice"
+                    next: "negotiation-mainpath-imsorry-benice"
+                  - when-no-event: "chloe-will-be-nice"
+                    next: "negotiation-mainpath-imsorry-benormal"
+                  - next: "state-negotiation-mainpath-2"
+              - name: "You already did" 
+                step:
+                  - next: "negotiation-mainpath-youalreadydid"
+                  - next: "state-negotiation-mainpath-badchoices"
+              - name: "Help or else" 
+                step:
+                  - next: "negotiation-mainpath-helporelse"
+                  - next: "state-negotiation-mainpath-badchoices"
+              - name: "You don't get it" 
+                step:
+                  - next: "negotiation-mainpath-youdontgetit"
+                  - next: "state-negotiation-mainpath-badchoices"
+
+      "state-negotiation-mainpath-badchoices":
+        step:
+          - next: "negotiation-mainpath-badchoices"
+          - when-event: "chloe-will-be-nice"
+            next: "negotiation-mainpath-badchoices-benice"
+          - when-no-event: "chloe-will-be-nice"
+            next: "negotiation-mainpath-badchoices-benormal"
+          - when-event: "angry-1"
+            step:
+              - next: "negotiation-mainpath-badchoices-angry-1"
+              - next: "state-ragemode"
+          - next: "state-negotiation-mainpath-2"
+
+      # REWIND CHECKPOINT-4
+
+      "checkpoint-4":
+        step:
+          - set-event: "checkpoint-3"
+          - clear-event: "checkpoint-4"
+          - next: "state-negotiation-mainpath-2"
+
+      "state-negotiation-mainpath-2":
+        step:
+          - next: "negotiation-mainpath-2"
+          - set-event: "checkpoint-4"
+          - when-no-event: "max-shot-frank"
+            step:
+              - next: "negotiation-mainpath-2-didntshootfrank"
+              - when-event: "chloe-will-be-nice"
+                next: "negotiation-mainpath-2-didntshootfrank-benice"
+              - when-no-event: "chloe-will-be-nice"
+                next: "negotiation-mainpath-2-didntshootfrank-benormal"
+              - next: "state-negotiation-mainpath-3"
+          - when-event: "max-shot-frank"
+            step:
+              - next: "negotiation-mainpath-2-shotfrank"
+              - options:
+                  - name: "You scared me" 
+                    step:
+                      - next: "negotiation-mainpath-2-shotfrank-scaredme"
+                      - when-event: "chloe-will-be-nice"
+                        next: "negotiation-mainpath-2-shotfrank-scaredme-benice"
+                      - when-no-event: "chloe-will-be-nice"
+                        next: "negotiation-mainpath-2-shotfrank-scaredme-benormal"
+                      - next: "state-negotiation-mainpath-3"
+                  - name: "Helping Chloe" 
+                    step:
+                      - next: "negotiation-mainpath-2-shotfrank-helpingchloe"
+                      - next: "state-negotiation-mainpath-2-badchoices"
+                  - name: "Our old hideout" 
+                    step:
+                      - next: "negotiation-mainpath-2-shotfrank-oldhideout"
+                      - next: "state-negotiation-mainpath-2-badchoices"
+                  - name: "No bullets" 
+                    step:
+                      - next: "negotiation-mainpath-2-shotfrank-nobullets"
+                      - next: "state-negotiation-mainpath-2-badchoices"
+
+      "state-negotiation-mainpath-2-badchoices":
+        step:
+          - next: "negotiation-mainpath-2-badchoices"
+          - when-event: "chloe-will-be-nice"
+            step:
+              - next: "negotiation-mainpath-2-badchoices-benice"
+              - when-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-2-badchoices-benice-angry-1"
+                  - next: "state-ragemode"
+              - when-no-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-2-badchoices-benice-no-angry-1"
+                  - next: "state-negotiation-mainpath-3"
+          - when-no-event: "chloe-will-be-nice"
+            step:
+              - next: "negotiation-mainpath-2-badchoices-benormal"
+              - when-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-2-badchoices-benormal-angry-1"
+                  - next: "state-ragemode"
+              - when-no-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-2-badchoices-benormal-no-angry-1"
+                  - next: "state-negotiation-mainpath-3"
+
+      # REWIND CHECKPOINT-5
+
+      "checkpoint-5":
+        step:
+          - set-event: "checkpoint-4"
+          - clear-event: "checkpoint-5"
+          - next: "state-negotiation-mainpath-3"
+
+      "state-negotiation-mainpath-3":
+        step:
+          - when-event: "dog-is-hurt"
+            next: "negotiation-mainpath-3-dogishurt"
+          - when-no-event: "dog-is-hurt"
+            next: "negotiation-mainpath-3-dognothurt"
+          - set-event: "checkpoint-5"
+          - options:
+              - when-event: "max-knows-dogs"
+                name: "Dog rescue"
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-dogrescue"
+                  - next: "state-negotiation-mainpath-3-dogcheck-goodchoices"
+              - when-no-event: "max-knows-dogs"
+                name: "I love dogs" 
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-ilovedogs"
+                  - next: "state-negotiation-mainpath-3-dogcheck-goodchoices"
+              - name: "Gave dog a bone" 
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-gavedogabone"
+                  - next: "state-negotiation-mainpath-3-dogcheck-badchoices"
+              - name: "Pompidou is cute" 
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-pompidou"
+                  - next: "state-negotiation-mainpath-3-dogcheck-badchoices"
+              - name: "Trained to kill"
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-trainedtokill"
+                  - next: "state-negotiation-mainpath-3-dogcheck-badchoices"
+
+      "state-negotiation-mainpath-3-dogcheck-goodchoices":
+        step:
+          - next: "negotiation-mainpath-3-dogcheck-goodchoices"
+          - when-event: "chloe-will-be-nice"
+            next: "negotiation-mainpath-3-dogcheck-goodchoices-benice"
+          - when-no-event: "chloe-will-be-nice"
+            next: "negotiation-mainpath-3-dogcheck-goodchoices-benormal"
+          - next: "state-negotiation-mainpath-4"
+
+      "state-negotiation-mainpath-3-dogcheck-badchoices":
+        step:
+          - next: "negotiation-mainpath-3-dogcheck-badchoices"
+          - when-event: "chloe-will-be-nice"
+            step:
+              - next: "negotiation-mainpath-3-dogcheck-badchoices-benice"
+              - when-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-badchoices-benice-angry-1"
+                  - next: "state-ragemode"
+              - when-no-event: "angry-1"
+                next: "state-negotiation-mainpath-4"
+          - when-no-event: "chloe-will-be-nice"
+            step:
+              - next: "negotiation-mainpath-3-dogcheck-badchoices-benormal"
+              - when-event: "angry-1"
+                step:
+                  - next: "negotiation-mainpath-3-dogcheck-badchoices-benormal-angry-1"
+                  - next: "state-ragemode"
+              - when-no-event: "angry-1"
+                next: "state-negotiation-mainpath-4"
+
+      # REWIND CHECKPOINT-6
+
+      "checkpoint-6":
+        step:
+          - set-event: "checkpoint-5"
+          - clear-event: "checkpoint-6"
+          - next: "state-negotiation-mainpath-4"
+
+      "state-negotiation-mainpath-4":
+        step:
+          - next: "negotiation-mainpath-4"
+          - set-event: "checkpoint-6"
+          - options:
+              - when-event: "max-knows-photo"
+                name: "Rachel Photo" 
+                step:
+                  - next: "negotiation-mainpath-4-rachelphoto"
+                  - next: "state-negotiation-mainpath-4-goodchoices"
+              - when-no-event: "max-knows-photo"
+                name: "You know Rachel" 
+                step:
+                  - next: "negotiation-mainpath-4-youknowrachel"
+                  - next: "state-negotiation-mainpath-4-goodchoices"
+              - name: "What are you hiding?" 
+                step:
+                  - next: "negotiation-mainpath-4-whatareyouhiding"
+                  - next: "state-ragemode"
+              - name: "Rachel's Letter" 
+                step:
+                  - next: "negotiation-mainpath-4-rachelsletter"
+                  - next: "state-negotiation-mainpath-4-badchoices"
+              - name: "Bracelet"
+                step:
+                  - next: "negotiation-mainpath-4-bracelet"
+                  - next: "state-negotiation-mainpath-4-badchoices"
+
+      "state-negotiation-mainpath-4-goodchoices":
+        step:
+          - next: "negotiation-mainpath-4-goodchoices"
+          - when-event: "frank-has-chloe-gun"
+            next: "negotiation-mainpath-4-goodchoices-frankgun"
+          - next: "state-goodend"
+
+      "state-negotiation-mainpath-4-badchoices":
+        step:
+          - next: "negotiation-mainpath-4-badchoices"
+          - next: "state-ragemode"
+
+      # END-1
+
+      "state-goodend":
+        step:
+          - next: "goodend"
+          - options:
+              - name: "RESTART"
+                reload: true
+
+      # END-2
+
+      "state-ragemode":
+        step:
+          - select-first:
+              - when:
+                  - event: "chloe-has-gun"
+                  - event: "frank-has-chloe-gun"
+                  - event: "dog-is-present" 
+                next: "ragemode-chloe-gun-frank-gun-dog"
+              - when:
+                  - event: "chloe-has-gun"
+                  - event: "frank-has-chloe-gun"
+                  - no-event: "dog-is-present" 
+                next: "ragemode-chloe-gun-frank-gun-no-dog"
+              - when:
+                  - event: "chloe-has-gun"
+                  - no-event: "frank-has-chloe-gun"
+                  - event: "dog-is-present" 
+                next: "ragemode-chloe-gun-frank-no-gun-dog"
+              - when:
+                  - event: "chloe-has-gun"
+                  - no-event: "frank-has-chloe-gun"
+                  - no-event: "dog-is-present" 
+                next: "ragemode-chloe-gun-frank-no-gun-no-dog"
+              - when:
+                  - no-event: "chloe-has-gun"
+                  - event: "frank-has-chloe-gun"
+                  - event: "dog-is-present" 
+                step:
+                  - next: "ragemode-chloe-no-gun-frank-gun-dog"
+                  - next: "checkpoint-1"
+              - when:
+                  - no-event: "chloe-has-gun"
+                  - event: "frank-has-chloe-gun"
+                  - no-event: "dog-is-present" 
+                next: "ragemode-chloe-no-gun-frank-gun-no-dog"
+              - when:
+                  - no-event: "chloe-has-gun"
+                  - no-event: "frank-has-chloe-gun"
+                  - event: "dog-is-present" 
+                step:
+                  - next: "ragemode-chloe-no-gun-frank-no-gun-dog"
+                  - next: "checkpoint-1"
+              - when:
+                  - no-event: "chloe-has-gun"
+                  - no-event: "frank-has-chloe-gun"
+                  - no-event: "dog-is-present" 
+                next: "ragemode-chloe-no-gun-frank-no-gun-no-dog"
+
+          - options:
+              - name: "RESTART"
+                reload: true
+
+      #
+      # Lines
+      #
+      #   While dialogue lines don't need to be grouped separately, separating the logic (states) from the
+      #   actual dialogue makes it simpler to both edit the logic (and see it all at once) and edit the dialogue
+      #   without affecting the logic.
+      #
+
+      "first-start-gun":
+        step:
+          - description: "Max and Chloe are sitting in Chloe's beat up truck."
+          - description: "They are parked on the beach, a few feet away from the local dealer, Franks, trailer."
+          - description: "In front of them are whales, stuck on the sandy Oregon shore."
+          - description: "They are crying for help."
+          - say: [ "Max", "God...I hate seeing those poor whales like that..." ]
+          - say: [ "Chloe", "Me too. I just think of their families out there in the ocean looking for them..." ]
+          - say: [ "Chloe", "Well, that asshole is gonna help us find Rachel." ]
+          - description: "Chloe pulls out a gun."
+          - say: [ "Max", "Or what? You'll actually shoot him? Chloe, do not count on my rewind... seriously." ]
+          - description: "Chloe smirks."
+          - say: [ "Chloe", "Obviously I'm not counting on you. That's why I have a gun." ]
+          - say: [ "Chloe", "And I might even save you someday." ]
+          - say: [ "Max", "About time." ]
+          - say: [ "Chloe", "I am so going to hit you." ]
+          - say: [ "Chloe", "There's no way we could've guessed this is what would happen to us when we grew up..." ]
+          - say: [ "Max", "I'm looking forward to the day when we can just go on a road trip to Portland." ]
+          - say: [ "Chloe", "Fuck yeah! You, me...and Rachel." ]
+          - say: [ "Max", "Absolutely. So, let's play this cool, okay?" ]
+          - say: [ "Max", "Just talk to Frank so we can get that code from the book from him. That's all." ]
+          - say: [ "Chloe", "Got it. No dicking around." ]
+          - say: [ "Max", "Let's roll." ]
+
+      "first-start-no-gun":
+        step:
+          - description: "Max and Chloe are sitting in Chloe's beat up truck."
+          - description: "They are parked on the beach, a few feet away from the local dealer, Franks, trailer."
+          - description: "In front of them are whales, stuck on the sandy Oregon shore."
+          - description: "They are crying for help."
+          - say: [ "Max", "God...I hate seeing those poor whales like that..." ]
+          - say: [ "Chloe", "Me too. I just think of their families out there in the ocean looking for them..." ]
+          - say: [ "Chloe", "Well, that asshole is gonna help us find Rachel." ]
+          - say: [ "Chloe", "There's no way we could've guessed this is what would happen to us when we grew up..." ]
+          - say: [ "Max", "I'm looking forward to the day when we can just go on a road trip to Portland." ]
+          - say: [ "Chloe", "Fuck yeah! You, me...and Rachel." ]
+          - say: [ "Max", "Absolutely. So, let's play this cool, okay?" ]
+          - say: [ "Max", "Just talk to Frank so we can get that code from the book from him. That's all." ]
+          - say: [ "Chloe", "Got it. No dicking around." ]
+          - say: [ "Max", "Let's roll." ]
+
+      "restart":
+        step:
+          - description: "Chloe is leaning against Franks trailer. Nonchalantly looking towards the ocean."
+          - say: [ "Max", "Listen Chloe, I can tell you for a fact that this will not go well." ]
+          - say: [ "Chloe", "Max, I should have known you would be kind and rewind..." ]
+          - say: [ "Chloe", "So tell me exactly what we need to do here..." ]
+
+      "restart-watchyourmouth":
+        step:
+          - say: [ "Max", "Please watch your mouth. You have no social skills here and you will piss off Frank immediately." ]
+          - say: [ "Chloe", "You kind of love this don't you? Fine, fine, I'll try being like you for a change. Or how you used to be..." ]
+
+      "restart-becareful":
+        step:
+          - say: [ "Max", "Be careful, okay? I'm ready to rewind, just don't give Frank any excuses to go ballistic... We need his help, Chloe." ]
+          - say: [ "Chloe", "You know, I'm not a total fuck-up. Occasionally, I can be both cool and careful..." ]
+          - say: [ "Chloe", "Like now, okay?" ]
+
+      "restart-getridofgun":
+        step:
+          - say: [ "Max", "You won't like this, but you need to get rid of that gun..." ]
+          - say: [ "Chloe", "No Max, I don't like that at all... But I trust you. And girl, if I need that gun you better rewind fast..." ]
+
+      "negotiation":
+        step:
+          - description: "The girls knock on the door."
+          - description: "Frank opens the door to his trailer. He looks annoyed at Chloe and Max."
+          - say: [ "Frank", "Oh look, the wonder twins." ]
+          - description: "He points at Chloe."
+          - say: [ "Frank", "You should have come alone." ]
+          - say: [ "Chloe", "She's my partner." ]
+          - description: "Frank looks at Max and scoffs."
+          - say: [ "Frank", "Yeah, or bodyguard." ]
+          - description: "He looks back to Chloe."
+          - say: [ "Frank", "So let's get to business. Where's my fucking money?" ]
+
+      "negotiation-stolemoney":
+        step:
+          - description: "Chloe looks at Max"
+
+      "negotiation-stolemoney-givemoneystart":
+        step:
+          - description: "Chloe reluctantly hands Frank the money."
+          - description: "Frank counts the stack."
+          - say: [ "Frank", "Oh, why, thanks you. That wasn't so hard, now was it?" ]
+          - say: [ "Frank", "And let's not do any more business again." ]
+          - description: "Frank turns towards his trailer."
+          - description: "He tucks the money into his jacket."
+          - say: [ "Chloe", "Frank... could we ask you a couple quick questions?" ]
+          - description: "Frank turns back."
+
+      "negotiation-stolemoney-givemoney":
+        step:
+          - description: "Frank laughs."
+          - say: [ "Frank", "You have serious ladyballs. No." ]
+          - description: "Frank looks hard at Chloe and Max's sincere faces."
+          - say: [ "Frank", "Jesus. Okay, okay." ]
+          - say: [ "Frank", "But I'm not getting you high." ]
+
+      "negotiation-stolemoney-notgivemoney":
+        step:
+          - description: "Frank gets angry."
+          - say: [ "Chloe", "We just want to ask you some questions." ]
+
+      "negotiation-notstolemoney":
+        step:
+          - description: "Chloe and Max exchange glances."
+          - say: [ "Chloe", "I- I don't have the money... yet." ]
+          - say: [ "Frank", "Oh, really..." ]
+          - description: "Frank walks towards Chloe, wagging his finger in her face."
+          - say: [ "Frank", "Then why did you text me that you did?" ]
+          - description: "Chloe steps back, her eyes wide."
+          - say: [ "Chloe", "Because I wanted to tell you in person." ]
+          - description: "Frank grimaces."
+          - say: [ "Frank", "Oh, I'm truly touched, Chloe. Now why are you losers really here?" ]
+          - say: [ "Chloe", "We just want to ask you some questions." ]
+
+      "negotiation-rewindcheck-yes-closethedoor":
+        step:
+          - say: [ "Max", "Frank... uh... your dog is kind of scary, could you please close the RV door?" ]
+          - say: [ "Frank", "You aim a gun at me but you're scared of my dog. Figures." ]
+          - description: "Frank pushes the trailer door shut. The lock clicks."
+          - say: [ "Frank", "Okay. There, you're safe. Now what do you want?" ]
+
+      "negotiation-rewindcheck-yes-nofight":
+        step:
+          - say: [ "Max", "Thanks for hearing me out, Frank. Look, we only want to talk and it's not even about you..." ]
+          - say: [ "Max", "We're not here to start a fight." ]
+          - say: [ "Frank", "No, that shit would be over pretty fast. Don't fuck with me and I won't return the favor." ]
+          - say: [ "Frank", "So what do you want?" ]
+
+      "negotiation-rewindcheck-yes-noweapons":
+        step:
+          - say: [ "Max", "Uh, Frank, after our last meeting, I don't want any weapons involved..." ]
+          - say: [ "Max", "Could you put you knife... or whatever... in the RV until we're done talking?" ]
+          - say: [ "Frank", "After you pulled a fucking gun on me you want to negotiate my safety?" ]
+          - say: [ "Frank", "I didn't trust you before and now I do less..." ]
+          - description: "Frank gets angry."
+
+      "negotiation-rewindcheck-yes-noweapons-angry-1":
+        step:
+          - say: [ "Frank", "God, I hate you Blackwell shits... You act like you own this town... like I'm your puppet." ]
+          - say: [ "Frank", "NOBODY owns me, understand?" ]
+
+      "negotiation-rewindcheck-yes-noweapons-no-angry-1":
+        step:
+          - say: [ "Frank", "By the way, never tell me what to do in my home." ]
+          - say: [ "Frank", "Maybe I don't have a fancy Arcadia Bay house but this is my turf, got it?" ]
+          - say: [ "Frank", "You're damn lucky you paid me back... So what do you want?" ]
+
+      "negotiation-rewindcheck-no":
+        step:
+          - say: [ "Max", "Frank, we're not here to get high." ]
+          - say: [ "Frank", "No, you don't look like the type. Not like Chloe here..." ]
+          - say: [ "Frank", "So what do the Hardy Boys want?" ]
+
+      "negotiation-mainpath":
+        step:
+          - say: [ "Max", "Just the name of some of your clients..." ]
+          - description: "Frank laughs."
+          - say: [ "Frank", "Oh, is that all? Well, why didn't you just tell me?" ]
+          - say: [ "Frank", "How about I just give you the keys to my RV while I'm at it?" ]
+
+      "negotiation-mainpath-imsorry":
+        step:
+          - say: [ "Max", "Listen Frank, I'm sorry to be such a nuisance, but this is important." ]
+          - description: "Frank crosses his arms."
+          - say: [ "Frank", "Yeah, everything's important these days." ]
+          - description: "He looks at Max."
+          - say: [ "Frank", "But I can tell that you're not bullshitting me..." ]
+          - say: [ "Max", "There's no time for that, Frank." ]
+          - say: [ "Max", "I just need a little bit of information..." ]
+          - say: [ "Frank", "Yeah, yeah. It always starts with a little, right? Chloe knows all about that... don't you?" ]
+
+      "negotiation-mainpath-imsorry-benice":
+        step:
+          - say: [ "Chloe", "Frank, I... I guess you're right." ]
+
+      "negotiation-mainpath-imsorry-benormal":
+        step:
+          - say: [ "Chloe", "Come on, Frank. This isn't about me now." ]
+
+      "negotiation-mainpath-youalreadydid":
+        step:
+          - say: [ "Max", "You already did." ]
+          - say: [ "Frank", "Uh, are you fucking mental?" ]
+          - say: [ "Frank", "I lost my keys... but I changed the lock." ]
+          - description: "Franks eyes narrow."
+          - say: [ "Frank", "You goddamn better not be snooping around here..." ]
+
+      "negotiation-mainpath-helporelse":
+        step:
+          - say: [ "Max", "Help us... or else." ]
+          - say: [ "Frank", "Are you actually threatening me again, little girl?" ]
+
+      "negotiation-mainpath-youdontgetit":
+        step:
+          - say: [ "Max", "You don't get it, man... This is for a good cause." ]
+          - say: [ "Frank", "No 'man' I don't get it... especially from a weirdo like you..." ]
+          - say: [ "Frank", "You know, I hate the way you talk to me, like you... like you know more than I do..." ]
+
+      "negotiation-mainpath-badchoices":
+        step:
+          - say: [ "Max", "No, I'm not... I..." ]
+          - say: [ "Frank", "Christ, I hate you Blackwell shits." ]
+          - say: [ "Frank", "You expect everything for free... You're not getting any handouts from me. I work for a living, understand?" ]
+
+      "negotiation-mainpath-badchoices-benice":
+        step:
+          - say: [ "Chloe", "I know you do, Frank." ]
+          - say: [ "Chloe", "But those Blackwell shits are still your customers... and I hate them as much as you..." ]
+          - description: "Frank gets angry."
+
+      "negotiation-mainpath-badchoices-benormal":
+        step:
+          - say: [ "Chloe", "Yes, Frank. Without those Blackwell shits as customers, you wouldn't have any work at all" ]
+          - say: [ "Chloe", "Dude, you're a drug dealer!" ]
+          - description: "Frank gets angry."
+
+      "negotiation-mainpath-badchoices-angry-1":
+        step:
+          - say: [ "Frank", "You snobby whores! Don't come to my home and judge me! That's why I go to church!" ]
+          - say: [ "Frank", "And you want something from me? How about a blade up your ass? Huh?" ]
+
+      "negotiation-mainpath-2":
+        step:
+          - say: [ "Frank", "Yeah, right, okay. Both of you are giving me a headache. No deal." ]
+          - say: [ "Max", "Frank... we didn't come here to fight. This is so much bigger than us..." ]
+
+      "negotiation-mainpath-2-didntshootfrank":
+        step:
+          - say: [ "Frank", "Yeah, you didn't come to fight... a day after you pulled a fucking gun on me." ]
+          - say: [ "Max", "I... I am so sorry about that." ]
+          - say: [ "Max", "It might be the dumbest thing I've ever done. And I've done a lot of dumb things this week." ]
+          - say: [ "Frank", "Finally I believe you... But don't ever aim a gun at anybody unless you intend to kill." ]
+          - say: [ "Frank", "Although you don't look like you could kill a bug..." ]
+          - say: [ "Max", "I try not to. And I never would have pulled that trigger. I was just..." ]
+
+      "negotiation-mainpath-2-didntshootfrank-benice":
+        step:
+          - say: [ "Chloe", "Frank, she was so scared." ]
+          - say: [ "Chloe", "She's never even held a gun before... or since. It's my fault... Are we cool... please?" ]
+
+      "negotiation-mainpath-2-didntshootfrank-benormal":
+        step:
+          - say: [ "Chloe", "Dude, she was scared, all right?" ]
+          - say: [ "Chloe", "You pulled your blade on me. We were all freaked out... Now we're all cool... please?" ]
+
+      "negotiation-mainpath-2-shotfrank":
+        step:
+          - say: [ "Frank", "What? You come in peace? After you aimed a fucking gun at me and pulled the trigger?" ]
+
+      "negotiation-mainpath-2-shotfrank-scaredme":
+        step:
+          - say: [ "Max", "To be honest, Frank... you scared me." ]
+          - say: [ "Max", "You held a knife on my friend. I didn't want to pull the trigger..." ]
+          - say: [ "Frank", "I could tell by the way you held that pop gun like it was a Magnum." ]
+          - say: [ "Frank", "Maybe I shouldn't have brought that knife to a gun fight." ]
+          - say: [ "Max", "I only want to shoot with my camera, I swear. Ask Chloe..." ]
+
+      "negotiation-mainpath-2-shotfrank-scaredme-benice":
+        step:
+          - say: [ "Chloe", "Hey, Frank, listen... well, see, uh never mind. Forget I said anything." ]
+
+      "negotiation-mainpath-2-shotfrank-scaredme-benormal":
+        step:
+          - say: [ "Chloe", "Look Frank, Max doesn't need a gun anyway... so are we cool? Please?" ]
+
+      "negotiation-mainpath-2-shotfrank-helpingchloe":
+        step:
+          - say: [ "Max", "I was helping Chloe after you threatened to cut her, remember?" ]
+          - say: [ "Frank", "You're lucky all I brought was a knife otherwise you and your girlfriend wouldn't be bothering me." ]
+          - say: [ "Frank", "You really think you're tough shit, girlie?" ]
+
+      "negotiation-mainpath-2-shotfrank-oldhideout":
+        step:
+          - say: [ "Max", "That was our old hideout... You shouldn't have hassled us there." ]
+          - say: [ "Frank", "\"Old hideout\"? What are you, The Goonies?" ]
+          - say: [ "Frank", "I could still fuck you up after what you did. Stay out of my business, get it?" ]
+          - say: [ "Max", "I just... I didn't know what I was doing." ]
+
+      "negotiation-mainpath-2-shotfrank-nobullets":
+        step:
+          - say: [ "Max", "There were no bullets in the gun. You were safe, tough guy." ]
+          - say: [ "Frank", "There's something wrong with you, girlie..." ]
+          - say: [ "Frank", "You pulled the trigger because you wanted to show me how safe I was?" ]
+
+      "negotiation-mainpath-2-badchoices":
+        step:
+          - say: [ "Max", "I just... I didn't know what I was doing..." ]
+
+      "negotiation-mainpath-2-badchoices-benice":
+        step:
+          - say: [ "Chloe", "Come on, Frank, look at her... She's not trying to be a badass, she's just scared... like me..." ]
+          - description: "Frank gets angry."
+
+      "negotiation-mainpath-2-badchoices-benice-angry-1":
+        step:
+          - say: [ "Frank", "I'm not afraid of anybody except my maker! And you little bitches think you can outsmart me?" ]
+          - say: [ "Frank", "Why, because I'm trailer trash? You're Blackwell trash! And it's time to take you out..." ]
+
+      "negotiation-mainpath-2-badchoices-benice-no-angry-1":
+        step:
+          - say: [ "Chloe", "So I hope we can all be cool..." ]
+
+      "negotiation-mainpath-2-badchoices-benormal":
+        step:
+          - say: [ "Chloe", "Dude, get off her ass! She was protecting me!" ]
+          - say: [ "Chloe", "You've got a knife and god knows what else! Are you really afraid of Max here?" ]
+          - description: "Frank's nostrils flare."
+
+      "negotiation-mainpath-2-badchoices-benormal-angry-1":
+        step:
+          - say: [ "Frank", "I'm not afraid of anybody except my maker! And you little bitches think you can outsmart me?" ]
+          - say: [ "Frank", "Why, because I'm trailer trash? You're Blackwell trash! And it's time to take you out..." ]
+
+      "negotiation-mainpath-2-badchoices-benormal-no-angry-1":
+        step:
+          - say: [ "Chloe", "Come on, Frank... are we cool?" ]
+
+      "negotiation-mainpath-3-dognothurt":
+        step:
+          - say: [ "Frank", "Okay, we're cool for now... but my dog isn't..." ]
+          - say: [ "Frank", "...And if you try any shit, he will bite your head off. He's done it before." ]
+          - say: [ "Max", "We're only here to talk... I wouldn't mess with your dog." ]
+          - say: [ "Frank", "Shit, you wouldn't have time... Do you like dogs?" ]
+
+      "negotiation-mainpath-3-dogishurt":
+        step:
+          - say: [ "Frank", "Okay, we're cool for now... but my dog isn't..." ]
+          - say: [ "Frank", "He got out of the RV and a motherfucking big rig hit him. I beat that fucker down..." ]
+          - say: [ "Max", "God, Frank... that's awful. How... How is he?" ]
+          - say: [ "Frank", "Little bastard is lucky to be alive. Again. Like you give a shit." ]
+
+      "negotiation-mainpath-3-dogcheck-dogrescue":
+        step:
+          - say: [ "Max", "Of course I do! I heard you even rescued a bunch of fight dogs... That's so amazing!" ]
+          - say: [ "Frank", "No, it was just the right thing to do..." ]
+          - say: [ "Frank", "I couldn't stand to see those poor animals treated like slaves. That's how I came to own Pompidou..." ]
+
+      "negotiation-mainpath-3-dogcheck-ilovedogs":
+        step:
+          - say: [ "Max", "I love dogs. Period. I wish I had one trained as well as yours." ]
+          - say: [ "Frank", "Yeah, he had a bad trainer before. Real bad. But he's dead now. And I trained Pompidou how to be my friend." ]
+
+      "negotiation-mainpath-3-dogcheck-gavedogabone":
+        step:
+          - say: [ "Max", "Chloe and I gave your doggie a bone when we..." ]
+          - say: [ "Frank", "So you're the ones who let him out!" ]
+          - say: [ "Frank", "You broke in here and let my dog out! WHAT THE FUCK?" ]
+
+      "negotiation-mainpath-3-dogcheck-pompidou":
+        step:
+          - say: [ "Max", "Oh, Pompidou is sooo cute!" ]
+          - say: [ "Frank", "The only way you know my dog's name is if you broke in my RV... that's how he got out!" ]
+          - say: [ "Frank", "You did it! Are you crazy? That's my DOG." ]
+
+      "negotiation-mainpath-3-dogcheck-trainedtokill":
+        step:
+          - say: [ "Max", "I don't care about dogs trained to kill or fight... That's animal abuse." ]
+          - say: [ "Frank", "You think I abuse my own dog? I rescued Pompidou, you asshole!" ]
+
+      "negotiation-mainpath-3-dogcheck-goodchoices":
+        step:
+          - say: [ "Max", "That's very cool, Frank. Your dog is lucky you came along." ]
+
+      "negotiation-mainpath-3-dogcheck-goodchoices-benice":
+        step:
+          - say: [ "Chloe", "So we should probably talk about Rachel now..." ]
+
+      "negotiation-mainpath-3-dogcheck-goodchoices-benormal":
+        step:
+          - description: "Chloe snaps at them."
+          - say: [ "Chloe", "Maybe we can focus on rescuing Rachel now?" ]
+
+      "negotiation-mainpath-3-dogcheck-badchoices":
+        step:
+          - say: [ "Max", "Wait! We didn't... That's not what..." ]
+
+      "negotiation-mainpath-3-dogcheck-badchoices-benice":
+        step:
+          - say: [ "Chloe", "Frank, please don't get upset... Do you know this is only about Rachel?" ]
+          - description: "Frank gets angry."
+
+      "negotiation-mainpath-3-dogcheck-badchoices-benice-angry-1":
+        step:
+          - say: [ "Frank", "Rachel isn't in here! And I'll spin you on your ass! What the fuck are you dorks up to? Trying to break into my business?" ]
+          - say: [ "Frank", "This time the price is wrong, skank!" ]
+
+      "negotiation-mainpath-3-dogcheck-badchoices-benormal":
+        step:
+          - say: [ "Chloe", "Seriously, Frank, don't get all spun out. We're only here to find Rachel." ]
+          - description: "Frank gets angry."
+
+      "negotiation-mainpath-3-dogcheck-badchoices-benormal-angry-1":
+        step:
+          - description: "Frank slams his foot on the sandy hill."
+          - say: [ "Frank", "Rachel isn't in here! And I'll spin you on your ass! What the fuck are you dorks up to? Trying to break into my business?" ]
+          - say: [ "Frank", "This time the price is wrong, skank!" ]
+
+      "negotiation-mainpath-4":
+        step:
+          - say: [ "Frank", "Rachel? Is that why you're really here?" ]
+          - say: [ "Max", "Yes, we're so close to finding her, Frank. We need all the help we can get now.. especially from you." ]
+          - say: [ "Frank", "You and Chloe do not know Rachel like I did... and I couldn't even help her." ]
+          - say: [ "Frank", "You're in way over your heads. Why don't you go play in your clubhouse?" ]
+
+      "negotiation-mainpath-4-rachelphoto":
+        step:
+          - say: [ "Max", "Rachel said she gave you one of her favorite photos... that proves how much she cares... and you care." ]
+          - say: [ "Max", "That's why you have to help..." ]
+          - say: [ "Frank", "How the hell did you know about that photo? That's my favorite picture of her..." ]
+          - say: [ "Frank", "I can look at it anytime and she'll always be there for me..." ]
+
+      "negotiation-mainpath-4-youknowrachel":
+        step:
+          - say: [ "Max", "Frank, you knew Rachel almost better than anybody. And you know more than us." ]
+          - say: [ "Max", "Together we could find her... Do you have anything to lose?" ]
+          - say: [ "Frank", "When Rachel vanished, I pretty much lost everything..." ]
+
+      "negotiation-mainpath-4-whatareyouhiding":
+        step:
+          - say: [ "Max", "What are you hiding, Frank? You should want to help us, not scare us away.." ]
+          - say: [ "Frank", "Don't you accuse me of anything. You do not know me or who I am." ]
+          - say: [ "Frank", "Or what I can do. Understand? Huh?" ]
+          - say: [ "Frank", "Man, there is something about you that is so wrong... I don't trust you at all. Now get out of my face." ]
+          - say: [ "Max", "We don't have much time, Frank. Rachel needs you..." ]
+          - description: "Frank waves his arms in anguish."
+          - say: [ "Frank", "It's too late! She's gone! You don't even know her!" ]
+          - say: [ "Chloe", "Like you did? I loved her, asshole. And she loved me. I know that." ]
+          - description: "Frank waves his arms in Chloe's face."
+          - say: [ "Frank", "Chloe, you don't know shit! You were part of her problem." ]
+          - say: [ "Frank", "Always trying to take her away from me... Always!" ]
+
+      "negotiation-mainpath-4-rachelsletter":
+        step:
+          - say: [ "Max", "Listen, I read Rachel's letter... I know how much she cared about you." ]
+          - say: [ "Frank", "You read that letter? The one in my RV? Are you fucking insane?" ]
+          - say: [ "Frank", "YOU READ MY PRIVATE LETTER?" ]
+
+      "negotiation-mainpath-4-bracelet":
+        step:
+          - say: [ "Max", "You have Rachel's bracelet. You obviously know more than you're telling. So tell us." ]
+          - say: [ "Frank", "Never come into my home and tell me what to do, understand? Huh?" ]
+
+      "negotiation-mainpath-4-goodchoices":
+        step:
+          - say: [ "Frank", "I can't stand not knowing where she is... not hearing her voice.. or her laugh... anymore..." ]
+          - say: [ "Max", "We can change all that... it's up to you." ]
+
+      "negotiation-mainpath-4-goodchoices-frankgun":
+        step:
+          - description: "Frank gives back the gun to Chloe."
+
+      "negotiation-mainpath-4-badchoices":
+        step:
+          - say: [ "Frank", "Man, there is something about you that is so wrong... I don't trust you at all. Now get out of my face." ]
+          - say: [ "Max", "We don't have much time, Frank. Rachel needs you..." ]
+
+      "ragemode-chloe-gun-frank-gun-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe whips out her gun."
+          - say: [ "Chloe", "Step the fuck back now!" ]
+          - description: "Chloe point her gun at Frank. Her hands are shaking."
+          - description: "Frank's dog runs out of the trailer, running towards Chloe."
+          - description: "Chloe is startled, she pulls the trigger."
+          - say: [ "Frank", "Pompidou!" ]
+          - description: "Pompidou's body twitches, blood pools around it."
+          - description: "Chloe stares wide-eyed at Pompidou's corpse."
+          - description: "Franks eyebrow twitches. he pulls a gun out of his pocket."
+          - say: [ "Frank", "You fucking killed my dog!" ]
+          - description: "Chloe points the gun at Frank."
+          - description: "BANG!"
+          - description: "Max is staring at the scene with horror."
+          - description: "Chloe is standing over Frank's body."
+          - description: "Blood pools around him."
+          - description: "Chloe stares at the gun in her hand."
+          - say: [ "Max", "Oh no!" ]
+          - description: "Max slowly walks towards Chloe."
+          - say: [ "Max", "Chloe..." ]
+          - say: [ "Chloe", "I just shot a man and his dog..." ]
+          - description: "Max buries her face in her hands."
+          - say: [ "Chloe", "I killed Frank Bowers..." ]
+          - say: [ "Max", "You saved my life, Chloe. It was self-defense for both of us." ]
+          - description: "Chloe stares at what used to be Frank."
+          - say: [ "Chloe", "Max... Frank is really dead." ]
+          - say: [ "Max", "I know. But we can't stop now. We have to find that code. Fast." ]
+          - description: "The girls kneel over Frank."
+          - say: [ "Chloe", "Before the co-cops come..." ]
+          - description: "They search the fresh corpse."
+          - description: "Chloe reaches into Franks pocket and pulls out the client list."
+          - say: [ "Max", "That's it. Let's get out of here." ]
+          - description: "The girls stand up."
+          - say: [ "Chloe", "Sorry, Frank... I'm sorry..." ]
+          - description: "Chloe runs towards their truck."
+          - description: "Max lingers of the corpse."
+          - description: "End: Chloe shoots and kills dog. Chloe shoots and kills Frank."
+
+      "ragemode-chloe-gun-frank-gun-no-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe whips out her gun."
+          - say: [ "Chloe", "Step the fuck back now!" ]
+          - description: "Chloe point her gun at Frank. Her hands are shaking."
+          - description: "Frank releases Max."
+          - description: "Frank swiftly pulls out a gun."
+          - description: "BANG!"
+          - description: "Chloe's hands are shaking."
+          - description: "Frank drops, his thigh shot."
+          - description: "Max kicks the knife away from Frank."
+          - say: [ "Frank", "You... you actually shot me! I wasn't going to hurt you." ]
+          - description: "Frank rolls around the ground."
+          - say: [ "Frank", "Ow, this fucking hurts, it hurts!" ]
+          - description: "Max stares at Frank in horror."
+          - say: [ "Max", "Chloe, you shot him..." ]
+          - say: [ "Chloe", "I know-" ]
+          - description: "Frank snaps at the girls."
+          - say: [ "Frank", "You're both fucking crazy! What do you want?" ]
+          - say: [ "Max", "We- we just want the code for you account book." ]
+          - description: "Chloe aims the gun at Frank."
+          - say: [ "Chloe", "Now!" ]
+          - say: [ "Frank", "Fine, whatever, just put the goddamn gun down! You already shot me, all right?" ]
+          - description: "Frank pulls out a piece of paper from his pocket."
+          - description: "Chloe snatches it from him."
+          - say: [ "Frank", "There. Now leave me alone, all right? Just get out of my life." ]
+          - say: [ "Max", "Do you want us to call an ambulance? Or..." ]
+          - description: "Max looks over to Chloe."
+          - description: "Chloe stares at the ground."
+          - say: [ "Frank", "No, thanks... You know what, I'll manage somehow without the police." ]
+          - description: "Frank slowly gets up."
+          - description: "He limps to his trailer."
+          - say: [ "Chloe", "Let's bounce." ]
+          - description: "Chloe grabs Max's shoulder and heads towards their truck."
+          - description: "End: Chloe shoots and harms Frank."
+
+      "ragemode-chloe-gun-frank-no-gun-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe whips out her gun."
+          - say: [ "Chloe", "Step the fuck back now!" ]
+          - description: "Chloe point her gun at Frank. Her hands are shaking."
+          - description: "Frank's dog runs out of the trailer, running towards Chloe."
+          - description: "Chloe is startled, she pulls the trigger."
+          - say: [ "Frank", "Pompidou!" ]
+          - description: "Pompidou's body twitches, blood pools around it."
+          - description: "Chloe stares wide-eyed at Pompidou's corpse."
+          - description: "Franks eyebrow twitches. he pulls a knife out of his jean pocket."
+          - description: "He barrels towards Chloe."
+          - say: [ "Frank", "You fucking killed my dog!" ]
+          - description: "Chloe points the gun at Frank."
+          - description: "BANG!"
+          - say: [ "Max", "Oh my god." ]
+          - description: "Max is staring at the scene with horror."
+          - description: "Chloe is standing over Frank's body."
+          - description: "Blood pools around him."
+          - description: "Chloe stares at the gun in her hand."
+          - say: [ "Max", "Oh no!" ]
+          - description: "Max slowly walks towards Chloe."
+          - say: [ "Max", "Chloe..." ]
+          - say: [ "Chloe", "I just shot a man and his dog..." ]
+          - description: "Max buries her face in her hands."
+          - say: [ "Chloe", "I killed Frank Bowers..." ]
+          - say: [ "Max", "You saved my life, Chloe. It was self-defense for both of us." ]
+          - description: "Chloe stares at what used to be Frank."
+          - say: [ "Chloe", "Max... Frank is really dead." ]
+          - say: [ "Max", "I know. But we can't stop now. We have to find that code. Fast." ]
+          - description: "The girls kneel over Frank."
+          - say: [ "Chloe", "Before the co-cops come..." ]
+          - description: "They search the fresh corpse."
+          - description: "Chloe reaches into Franks pocket and pulls out the client list."
+          - say: [ "Max", "That's it. Let's get out of here." ]
+          - description: "The girls stand up."
+          - say: [ "Chloe", "Sorry, Frank... I'm sorry..." ]
+          - description: "Chloe runs towards their truck."
+          - description: "Max lingers of the corpse."
+          - description: "End: Chloe shoots and kills dog. Chloe shoots and kills Frank."
+
+      "ragemode-chloe-gun-frank-no-gun-no-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe whips out her gun."
+          - say: [ "Chloe", "Step the fuck back now!" ]
+          - description: "Chloe point her gun at Frank. Her hands are shaking."
+          - description: "Frank releases Max."
+          - description: "Frank swiftly pulls a knife out of his pocket and lunches for Max."
+          - description: "BANG!"
+          - description: "Chloe's hands are shaking."
+          - description: "Frank drops, his thigh shot."
+          - description: "Max kicks the knife away from Frank."
+          - say: [ "Frank", "You... you actually shot me! I wasn't going to hurt you." ]
+          - description: "Frank rolls around the ground."
+          - say: [ "Frank", "Ow, this fucking hurts, it hurts!" ]
+          - description: "Max stares at Frank in horror."
+          - say: [ "Max", "Chloe, you shot him..." ]
+          - say: [ "Chloe", "I know-" ]
+          - description: "Frank snaps at the girls."
+          - say: [ "Frank", "You're both fucking crazy! What do you want?" ]
+          - say: [ "Max", "We- we just want the code for your account book." ]
+          - description: "Chloe aims the gun at Frank."
+          - say: [ "Chloe", "Now!" ]
+          - say: [ "Frank", "Fine, whatever, just put the goddamn gun down! You already shot me, all right?" ]
+          - description: "Frank pulls out a piece of paper from his pocket."
+          - description: "Chloe snatches it from him."
+          - say: [ "Frank", "There. Now leave me alone, all right? Just get out of my life." ]
+          - say: [ "Max", "Do you want us to call an ambulance? Or..." ]
+          - description: "Max looks over to Chloe."
+          - description: "Chloe stares at the ground."
+          - say: [ "Frank", "No, thanks... You know what, I'll manage somehow without the police." ]
+          - description: "Frank slowly gets up."
+          - description: "He limps to his trailer."
+          - say: [ "Chloe", "Let's bounce." ]
+          - description: "Chloe grabs Max's shoulder and heads towards their truck."
+          - description: "End: Chloe shoots and harms Frank."
+
+      "ragemode-chloe-no-gun-frank-gun-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - description: "Chloe pushes Frank off Max."
+          - description: "She stands between Frank and Max, scowling."
+          - description: "Frank pulls a gun from his pocket."
+          - say: [ "Max", "Woah." ]
+          - description: "Chloe reaches for Franks gun."
+          - description: "She pulls on his arm, trying to wrestle it out of his hand."
+          - description: "Max watches with a look of horror."
+          - say: [ "Frank", "Get off of me!" ]
+          - say: [ "Chloe", "Motherfucker!" ]
+          - description: "Pompidou runs out of Franks trailer, barking."
+          - description: "Pompidou heads straight for Chloe."
+          - description: "He bites her leg."
+          - description: "Max stops time."
+          - say: [ "Max", "Shit! I need to rewind and do something fast!" ]
+          - description: "End: Pompidou bites Chloe."
+ 
+      "ragemode-chloe-no-gun-frank-gun-no-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - description: "Chloe pushes Frank off Max."
+          - description: "She stands between Frank and Max, scowling."
+          - description: "Frank pulls a gun from his pocket."
+          - say: [ "Max", "Woah." ]
+          - description: "Chloe reaches for Franks gun."
+          - say: [ "Max", "Chloe!" ]
+          - description: "She pulls on his arm, trying to wrestle it out of his hand."
+          - say: [ "Frank", "Get off of me!" ]
+          - say: [ "Chloe", "Motherfucker!" ]
+          - description: "BANG!"
+          - description: "The gun goes off."
+          - description: "Frank drops to the floor."
+          - say: [ "Frank", "You... you actually shot me. I wasn't going to hurt you." ]
+          - description: "There is a bullet wound in Franks thigh. He is rolling around the floor in pain."
+          - say: [ "Frank", "Ow, this fucking hurts... it hurts!" ]
+          - description: "Max stares at Frank in horror."
+          - say: [ "Max", "Chloe, you shot him..." ]
+          - say: [ "Chloe", "I know-" ]
+          - description: "Frank snaps at the girls."
+          - say: [ "Frank", "You're both fucking crazy! What do you want?" ]
+          - say: [ "Max", "We- we just want the code for your account book." ]
+          - description: "Chloe aims the gun at Frank."
+          - say: [ "Chloe", "Now!" ]
+          - say: [ "Frank", "Fine, whatever, just put the goddamn gun down! You already shot me, all right?" ]
+          - description: "Frank pulls out a piece of paper from his pocket."
+          - description: "Chloe snatches it from him."
+          - say: [ "Frank", "There. Now leave me alone, all right? Just get out of my life." ]
+          - say: [ "Max", "Do you want us to call an ambulance? Or..." ]
+          - description: "Max looks over to Chloe."
+          - description: "Chloe stares at the ground."
+          - say: [ "Frank", "No, thanks... You know what, I'll manage somehow without the police." ]
+          - description: "Frank slowly gets up."
+          - description: "He limps to his trailer."
+          - say: [ "Chloe", "Let's bounce." ]
+          - description: "Chloe grabs Max's shoulder and heads towards their truck."
+          - description: "End: Chloe shoots and harms Frank."
+
+      "ragemode-chloe-no-gun-frank-no-gun-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe pushes Frank off Max."
+          - description: "Frank pulls a knife from his pocket."
+          - say: [ "Frank", "How do you like my blade, kid? Huh?" ]
+          - description: "Frank whips the blade around. He is slowly walking towards Chloe."
+          - description: "Chloe is stepping back."
+          - say: [ "Max", "Chloe!" ]
+          - description: "Chloe reaches for Franks knife."
+          - description: "She pulls on his arm, trying to wrestle the knife out of his hand."
+          - description: "Max watches with a look of horror."
+          - say: [ "Frank", "Get off of me!" ]
+          - say: [ "Chloe", "Motherfucker!" ]
+          - description: "Pompidou runs out of Franks trailer, barking."
+          - description: "BARK! BARK! BARK!"
+          - description: "Pompidou heads straight for Chloe."
+          - description: "He bites her leg."
+          - description: "Max stops time."
+          - say: [ "Max", "Shit! I need to rewind and do something fast!" ]
+          - description: "End: Pompidou bites Chloe."
+
+      "ragemode-chloe-no-gun-frank-no-gun-no-dog":
+        step:
+          - say: [ "Max", "Calm down Frank, let's just talk." ]
+          - description: "Frank reaches out for Max."
+          - say: [ "Frank", "Don't you ever tell me what to do." ]
+          - description: "He grips around her neck and drags her."
+          - say: [ "Frank", "Get it, bitch? Get it?" ]
+          - description: "Chloe pushes Frank off Max."
+          - description: "Frank pulls a knife from his pocket."
+          - say: [ "Frank", "How do you like my blade, kid? Huh?" ]
+          - description: "Frank whips the blade around. He is slowly walking towards Chloe."
+          - description: "Chloe is stepping back."
+          - say: [ "Max", "Whoa..." ]
+          - description: "Chloe reaches for Franks knife."
+          - description: "She pulls on his arm, trying to wrestle the knife out of his hand."
+          - description: "Max watches with a look of horror."
+          - say: [ "Frank", "Get off of me!" ]
+          - say: [ "Chloe", "Motherfucker!" ]
+          - description: "The knife slips from Chloe's hand."
+          - description: "Frank is knocked back. He falls to the floor."
+          - description: "He has a stab wound on his thigh, the knife protruding out of the wound. Blood is pooling on his jeans,"
+          - say: [ "Frank", "You're both fucking crazy! What do you want?" ]
+          - say: [ "Max", "We- we just want the code for you account book." ]
+          - description: "Frank pulls out a piece of paper from his pocket."
+          - description: "Chloe snatches it from him."
+          - say: [ "Frank", "There. Now leave me alone, all right? Just get out of my life." ]
+          - say: [ "Max", "Do you want us to call an ambulance? Or..." ]
+          - description: "Max looks over to Chloe."
+          - description: "Chloe stares at the ground."
+          - say: [ "Frank", "No, thanks... You know what, I'll manage somehow without the police." ]
+          - description: "Frank slowly gets up."
+          - description: "He limps to his trailer."
+          - say: [ "Chloe", "Let's bounce." ]
+          - description: "End: Chloe battles for the knife and harms Frank."
+
+      "goodend":
+        step:
+          - say: [ "Chloe", "Help us find her, Frank. Please... we really need your client list." ]
+          - description: "Frank looks at the sandy beach. His eyes glaze over."
+          - description: "He looks back at the girls."
+          - say: [ "Frank", "If there's a chance in hell you two dorks can find Rachel... I'll take it." ]
+          - say: [ "Frank", "My dog isn't barking at you, so I guess that's a good sign." ]
+          - description: "Frank digs into his pocket."
+          - description: "He pulls out a client list and hands it to Chloe."
+          - say: [ "Chloe", "Yeah, thanks, Frank. Seriously." ]
+          - description: "Frank purses his lips."
+          - say: [ "Frank", "It's hard to take you characters seriously... but I want to. Good luck." ]
+          - description: "Frank walks towards his trailer."
+          - description: "Chloe and Max turn towards their truck, affectionately touching shoulders."
+          - description: "Frank walks through his trailer door. It shuts lightly behind him."
+          - description: "End: Max and Chloe earn Frank's trust, and he gives them the code."

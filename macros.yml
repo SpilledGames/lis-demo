@@ -1,0 +1,240 @@
+$key:
+  
+  #
+  # Debug
+  #
+
+  "event-option":
+    retry: true
+    when:
+      - no-event: "@1"
+    name: "@2"
+    description: "@2"
+    set-event: "@1"
+
+  #
+  # Dialogue Simple Cases
+  #
+
+  "say":
+    dialogue-line:
+      actor: "@1"
+      class: "say"
+      line:
+        - text: "@2"
+
+  "description":
+    dialogue-line:
+      class: "description"
+      line:
+        - text: "[@0]"
+
+  #
+  # Filter Simple Cases
+  #
+
+  "when-event":
+    when:
+      - event: "@0"
+
+  "when-no-event":
+    when:
+      - no-event: "@0"
+
+  "when-prev":
+    when:
+      - prev: "@0"
+
+  "when-no-prev":
+    when:
+      - no-prev: "@0"
+
+  #
+  # Filter Fold
+  #
+
+  "any-event-active":
+    any:
+      $map:
+        event-active: "@0"
+
+  "no-event":
+    none:
+      $map:
+        event: "@0"
+
+  "any-event":
+    any:
+      $map:
+        event: "@0"
+
+  "one-event":
+    one:
+      $map:
+        event: "@0"
+
+  "no-location":
+    none:
+      $map:
+        location: "@0"
+
+  "any-location":
+    any:
+      $map:
+        location: "@0"
+
+  "one-location":
+    one:
+      $map:
+        location: "@0"
+
+  "no-dialogue":
+    none:
+      $map:
+        dialogue: "@0"
+
+  "any-dialogue":
+    any:
+      $map:
+        dialogue: "@0"
+
+  "one-dialogue":
+    one:
+      $map:
+        dialogue: "@0"
+
+  "no-prev":
+    none:
+      $map:
+        prev: "@0"
+
+  "any-prev":
+    any:
+      $map:
+        prev: "@0"
+
+  "one-prev":
+    one:
+      $map:
+        prev: "@0"
+
+  "no-location-effect":
+    none:
+      $map:
+        location-effect: "@0"
+
+  "any-location-effect":
+    any:
+      $map:
+        location-effect: "@0"
+
+  "one-location-effect":
+    one:
+      $map:
+        location-effect: "@0"
+
+  "no-dialogue-effect":
+    none:
+      $map:
+        dialogue-effect: "@0"
+
+  "any-dialogue-effect":
+    any:
+      $map:
+        dialogue-effect: "@0"
+
+  "one-dialogue-effect":
+    one:
+      $map:
+        dialogue-effect: "@0"
+
+  "no-prev-effect":
+    none:
+      $map:
+        prev-effect: "@0"
+
+  "any-prev-effect":
+    any:
+      $map:
+        prev-effect: "@0"
+
+  "one-prev-effect":
+    one:
+      $map:
+        prev-effect: "@0"
+
+  "no-location-complete":
+    none:
+      $map:
+        location-complete: "@0"
+
+  "any-location-complete":
+    any:
+      $map:
+        location-complete: "@0"
+
+  "one-location-complete":
+    one:
+      $map:
+        location-complete: "@0"
+
+  "no-dialogue-complete":
+    none:
+      $map:
+        dialogue-complete: "@0"
+
+  "any-dialogue-complete":
+    any:
+      $map:
+        dialogue-complete: "@0"
+
+  "one-dialogue-complete":
+    one:
+      $map:
+        dialogue-complete: "@0"
+
+  "no-prev-complete":
+    none:
+      $map:
+        prev-complete: "@0"
+
+  "any-prev-complete":
+    any:
+      $map:
+        prev-complete: "@0"
+
+  "one-prev-complete":
+    one:
+      $map:
+        prev-complete: "@0"
+
+  "no-actor":
+    none:
+      $map:
+        actor: "@0"
+
+  "any-actor":
+    any:
+      $map:
+        actor: "@0"
+
+  "one-actor":
+    one:
+      $map:
+        actor: "@0"
+
+  "no-location-active":
+    none:
+      $map:
+        location-active: "@0"
+
+  "any-location-active":
+    any:
+      $map:
+        location-active: "@0"
+
+  "one-location-active":
+    one:
+      $map:
+        location-active: "@0"
+

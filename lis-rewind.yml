@@ -1,0 +1,30 @@
+locations:
+  "/lis/rewind":
+    name: "Rewind"
+
+    enter:
+      - select-first:
+          - when-event: "checkpoint-6"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-6" ]
+          - when-event: "checkpoint-5"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-5" ]
+          - when-event: "checkpoint-4"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-4" ]
+          - when-event: "checkpoint-3"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-3" ]
+          - when-event: "checkpoint-2"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-2" ]
+          - when-event: "checkpoint-1"
+            step:
+              - description: "Rewind..."
+              - call: [ "/lis/dark room/franks rv", "checkpoint-1" ]
